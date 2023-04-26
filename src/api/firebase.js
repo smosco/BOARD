@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  collection,
+  setDoc,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 const firebaseConfig = {
@@ -23,4 +30,13 @@ export const addNewPost = async (data, url) => {
     img: url,
     timestamp: serverTimestamp(),
   });
+};
+
+export const getPosts = async () => {
+  let posts = [];
+  const docSnap = await getDocs(collection(store, "posts"));
+  docSnap.forEach((doc) => {
+    posts.push(doc.data());
+  });
+  return posts;
 };
