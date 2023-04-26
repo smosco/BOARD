@@ -4,8 +4,10 @@ import {
   doc,
   collection,
   setDoc,
+  getDoc,
   getDocs,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
@@ -42,7 +44,16 @@ export const getPosts = async () => {
   return posts;
 };
 
-// doc으로 하면 되고 collection으로 하면
+export const getPost = async (postId) => {
+  const docRef = doc(store, "posts", postId);
+  const snapShot = await getDoc(docRef);
+  if (snapShot.exists()) {
+    return snapShot.data();
+  }
+  return {};
+};
+
+// doc으로 하면 되고 collection으로 하면 에러
 export const updatePost = async (postId, data, url) => {
   url
     ? await updateDoc(doc(store, "posts", postId), {
@@ -54,4 +65,8 @@ export const updatePost = async (postId, data, url) => {
         ...data,
         timestamp: serverTimestamp(),
       });
+};
+
+export const deletePost = async (postId) => {
+  await deleteDoc(doc(store, "posts", postId));
 };
