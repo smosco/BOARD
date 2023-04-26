@@ -16,7 +16,9 @@ export default function PostCard({ post }) {
       <div>{name}</div>
       <div>{email}</div>
       <div>{timestamp.seconds}</div>
-      <button onClick={() => navigate(`/update/${id}`)}>수정</button>
+      <button onClick={() => navigate(`/update/${id}`, { state: { post } })}>
+        수정
+      </button>
       <button>삭제</button>
     </div>
   );

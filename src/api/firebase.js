@@ -5,6 +5,7 @@ import {
   collection,
   setDoc,
   getDocs,
+  updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
@@ -39,4 +40,18 @@ export const getPosts = async () => {
     posts.push(doc.data());
   });
   return posts;
+};
+
+// doc으로 하면 되고 collection으로 하면
+export const updatePost = async (postId, data, url) => {
+  url
+    ? await updateDoc(doc(store, "posts", postId), {
+        ...data,
+        img: url,
+        timestamp: serverTimestamp(),
+      })
+    : await updateDoc(doc(store, "posts", postId), {
+        ...data,
+        timestamp: serverTimestamp(),
+      });
 };

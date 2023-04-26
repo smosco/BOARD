@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { addNewPost } from "../api/firebase";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { addNewPost, updatePost } from "../api/firebase";
 import { uploadImage } from "../api/uploader";
 
 const initialState = {
@@ -14,7 +14,20 @@ const initialState = {
 };
 
 export default function AddEdit() {
-  const [data, setData] = useState(initialState);
+  const { postId } = useParams();
+
+  const {
+    state: { post },
+  } = useLocation();
+
+  const select = () => {
+    if (post) {
+      return post;
+    }
+    return initialState;
+  };
+
+  const [data, setData] = useState(select());
   const [file, setFile] = useState(null);
   const [success, setSuccess] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -28,26 +41,59 @@ export default function AddEdit() {
       : setData({ ...data, [name]: value });
   };
 
+  //postId의 유무 file의 유무에 따라 등록을 달리해야한다.
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsUploading(true);
-    uploadImage(file)
-      .then((url) => {
-        addNewPost(data, url).then(() => {
-          setSuccess("글이 등록되었습니다.");
-          setTimeout(() => {
-            setSuccess(null);
-          }, 3000);
+    //처음 등록시에는 사진 필수
+    if (!postId) {
+      uploadImage(file) //
+        .then((url) => {
+          addNewPost(data, url) //
+            .then(() => {
+              setSuccess("글이 등록되었습니다.");
+              setTimeout(() => {
+                setSuccess(null);
+              }, 4000);
+            });
+        })
+
+        .finally(() => {
+          setIsUploading(false);
+          //navigate("/");
         });
-      })
-      .finally(() => {
-        setIsUploading(false);
-        navigate("/");
-      });
+    } else {
+      //수정시에는 사진 수정 없는 경우도 고려
+      file
+        ? uploadImage(file) //
+            .then((url) => {
+              updatePost(postId, data, url) //
+                .then(() => {
+                  setSuccess("글이 수정되었습니다.");
+                  setTimeout(() => {
+                    setSuccess(null);
+                  }, 4000);
+                });
+            })
+        : updatePost(postId, data) //
+            .then(() => {
+              setSuccess("글이 수정되었습니다.");
+              setTimeout(() => {
+                setSuccess(null);
+              }, 4000);
+            })
+            .finally(() => {
+              setIsUploading(false);
+              //navigate("/");
+            });
+    }
   };
+
   return (
     <div>
+      <h2>{postId ? "EditPost" : "Add User"}</h2>
       {success && <p>✅{success}</p>}
+      {postId && !file && <img src={post.img} alt="cloudinary file" />}
       {file && <img src={URL.createObjectURL(file)} alt="local file" />}
       <form onSubmit={handleSubmit}>
         <input
@@ -86,10 +132,9 @@ export default function AddEdit() {
           type="file"
           name="file"
           accept="image/*"
-          required
           onChange={handleChange}
         />
-        <button disabled={isUploading}>등록</button>
+        <button disabled={isUploading}>{postId ? "수정" : "등록"}</button>
       </form>
     </div>
   );
