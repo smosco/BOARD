@@ -1,5 +1,11 @@
 import { initializeApp } from "firebase/app";
 import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+import {
   getFirestore,
   doc,
   collection,
@@ -23,7 +29,30 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth();
 const store = getFirestore(app);
+
+export const register = async (user) => {
+  const res = await createUserWithEmailAndPassword(
+    auth,
+    user.email,
+    user.password
+  );
+  await setDoc(doc(store, "users", res.user.uid), {
+    ...user,
+    uid: res.user.uid,
+  });
+};
+
+export const login = (email, password) => {
+  signInWithEmailAndPassword(auth, email, password);
+};
+
+export const onUserStateChange = () => {
+  onAuthStateChanged(auth, (user) => {
+    return user;
+  });
+};
 
 export const addNewPost = async (data, url) => {
   const id = uuidv4();

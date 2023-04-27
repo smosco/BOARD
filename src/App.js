@@ -1,5 +1,7 @@
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import AddEdit from "./pages/AddEdit";
@@ -29,6 +31,8 @@ const router = createBrowserRouter([
       { path: "/update/:postId", element: <AddEdit /> },
     ],
   },
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
 ]);
 
 function App() {
