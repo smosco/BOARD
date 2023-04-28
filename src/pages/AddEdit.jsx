@@ -50,7 +50,7 @@ export default function AddEdit() {
               setTimeout(() => {
                 setSuccess(null);
                 navigate("/");
-              }, 4000);
+              }, 2000);
             });
         })
 
@@ -68,7 +68,7 @@ export default function AddEdit() {
                   setTimeout(() => {
                     setSuccess(null);
                     navigate("/");
-                  }, 4000);
+                  }, 2000);
                 });
             })
         : updatePost(postId, data) //
@@ -77,7 +77,7 @@ export default function AddEdit() {
               setTimeout(() => {
                 setSuccess(null);
                 navigate("/");
-              }, 4000);
+              }, 2000);
             })
             .finally(() => {
               setIsUploading(false);

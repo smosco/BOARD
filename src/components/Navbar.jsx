@@ -24,6 +24,7 @@ export default function Navbar() {
       {!user && <Link to="/register">회원가입</Link>}
       {user && <p>{user.displayName}님</p>}
       <button onClick={handleClick}>write</button>
+      <Link to="/mypage">마이페이지</Link>
     </div>
   );
 }

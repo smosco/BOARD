@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import { deletePost } from "../api/firebase";
 
-export default function Post() {
+export default function Post(update) {
   const { user } = useAuthContext();
   const {
     state: { post },

@@ -10,7 +10,9 @@ import {
 import {
   getFirestore,
   doc,
+  query,
   collection,
+  where,
   setDoc,
   getDoc,
   getDocs,
@@ -113,4 +115,16 @@ export const updatePost = async (postId, data, url) => {
 
 export const deletePost = async (postId) => {
   await deleteDoc(doc(store, "posts", postId));
+};
+
+export const getPostsById = async (userId) => {
+  const posts = [];
+  const postsRef = collection(store, "posts");
+  const q = query(postsRef, where("writerId", "==", userId));
+
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    posts.push(doc.data());
+  });
+  return posts;
 };

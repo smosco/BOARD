@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Post from "./pages/Post";
 import AddEdit from "./pages/AddEdit";
+import MyPage from "./pages/MyPage";
 import NotFound from "./pages/NotFound";
 
 const Layout = () => {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         element: <AddEdit />,
       },
       { path: "/update/:postId", element: <AddEdit /> },
+      { path: "/mypage", element: <MyPage /> },
     ],
   },
   { path: "/login", element: <Login /> },
