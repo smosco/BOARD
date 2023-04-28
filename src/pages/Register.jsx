@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { register } from "../api/firebase";
 
 export default function Register() {
@@ -7,13 +8,16 @@ export default function Register() {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    register(user);
+    register(user)
+      .then(navigate("/login"))
+      .catch((err) => console.log(err.message));
   };
   return (
     <div>
@@ -41,6 +45,9 @@ export default function Register() {
         />
         <button> 회원가입</button>
       </form>
+      <p>
+        You do have an accout? <Link to="/login">로그인</Link>
+      </p>
     </div>
   );
 }

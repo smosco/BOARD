@@ -4,6 +4,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  updateProfile,
+  signOut,
 } from "firebase/auth";
 import {
   getFirestore,
@@ -38,20 +40,31 @@ export const register = async (user) => {
     user.email,
     user.password
   );
+
+  await updateProfile(auth.currentUser, {
+    displayName: user.displayName,
+  });
+
   await setDoc(doc(store, "users", res.user.uid), {
     ...user,
     uid: res.user.uid,
   });
+
+  return res;
 };
 
-export const login = (email, password) => {
-  signInWithEmailAndPassword(auth, email, password);
+export const login = async (user) => {
+  await signInWithEmailAndPassword(auth, user.email, user.password);
 };
 
-export const onUserStateChange = () => {
-  onAuthStateChanged(auth, (user) => {
-    return user;
+export const onUserStateChange = (callback) => {
+  onAuthStateChanged(auth, async (user) => {
+    callback(user);
   });
+};
+
+export const logout = async () => {
+  await signOut(auth);
 };
 
 export const addNewPost = async (data, url) => {
@@ -82,7 +95,7 @@ export const getPost = async (postId) => {
   return {};
 };
 
-// doc으로 하면 되고 collection으로 하면 에러
+// doc으로 하면 되고 collection으로 하면 에러 => 일단 doc으로 포스팅을 했으니까요??
 export const updatePost = async (postId, data, url) => {
   url
     ? await updateDoc(doc(store, "posts", postId), {
