@@ -3,17 +3,19 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 import { addNewPost, updatePost, getPost } from "../api/firebase";
 import { uploadImage } from "../api/uploader";
 
 const initialState = {
-  name: "",
-  email: "",
-  info: "",
+  title: "",
+  location: "",
+  desc: "",
   contact: "",
 };
 
 export default function AddEdit() {
+  const { user } = useAuthContext();
   const { postId } = useParams();
 
   useEffect(() => {
@@ -34,7 +36,7 @@ export default function AddEdit() {
       : setData({ ...data, [name]: value });
   };
 
-  //postId의 유무 file의 유무에 따라 등록을 달리해야한다.
+  //postId의 유무(업데이트 or 첫등록) file의 유무에 따라 등록을 달리해야한다.
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsUploading(true);
@@ -42,7 +44,7 @@ export default function AddEdit() {
     if (!postId) {
       uploadImage(file) //
         .then((url) => {
-          addNewPost(data, url) //
+          addNewPost(user, data, url) //
             .then(() => {
               setSuccess("글이 등록되었습니다.");
               setTimeout(() => {
@@ -92,25 +94,25 @@ export default function AddEdit() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="name"
-          value={data.name}
-          placeholder="name"
+          name="title"
+          value={data.title}
+          placeholder="제목"
           required
           onChange={handleChange}
         />
         <input
           type="text"
-          name="email"
-          value={data.email}
-          placeholder="email"
+          name="location"
+          value={data.location}
+          placeholder="잃어버린 장소"
           required
           onChange={handleChange}
         />
         <input
           type="text"
-          name="info"
-          value={data.info}
-          placeholder="info"
+          name="desc"
+          value={data.desc}
+          placeholder="상세설명"
           required
           onChange={handleChange}
         />
@@ -118,7 +120,7 @@ export default function AddEdit() {
           type="text"
           name="contact"
           value={data.contact}
-          placeholder="contact"
+          placeholder="연락처"
           required
           onChange={handleChange}
         />

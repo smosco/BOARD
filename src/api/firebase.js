@@ -67,11 +67,13 @@ export const logout = async () => {
   await signOut(auth);
 };
 
-export const addNewPost = async (data, url) => {
-  const id = uuidv4();
-  await setDoc(doc(store, "posts", id), {
+export const addNewPost = async (user, data, url) => {
+  const postId = uuidv4();
+  await setDoc(doc(store, "posts", postId), {
     ...data,
-    id,
+    postId,
+    writer: user.displayName,
+    writerId: user.uid,
     img: url,
     timestamp: serverTimestamp(),
   });

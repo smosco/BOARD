@@ -1,28 +1,46 @@
 // 게시물 상세보기 페이지입니다.
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 import { deletePost } from "../api/firebase";
 
 export default function Post() {
+  const { user } = useAuthContext();
   const {
     state: { post },
   } = useLocation();
-  const { id, name, img, email, info, timestamp } = post;
+  const {
+    postId,
+    title,
+    writer,
+    writerId,
+    location,
+    img,
+    desc,
+    contact,
+    timestamp,
+  } = post;
   const navigate = useNavigate();
   const handleDelete = () => {
-    deletePost(id).then(() => {
+    deletePost(postId).then(() => {
       navigate("/");
     });
   };
   return (
     <div>
       <img src={img} alt="img" />
-      <div>{name}</div>
-      <div>{email}</div>
-      <div>{info}</div>
+      <div>{title}</div>
+      <div>{writer}</div>
+      <div>{location}</div>
+      <div>{desc}</div>
+      <div>{contact}</div>
       <div>{timestamp.seconds}</div>
-      <button onClick={() => navigate(`/update/${id}`)}>수정</button>
-      <button onClick={handleDelete}>삭제</button>
+      {user?.uid === writerId && (
+        <div>
+          <button onClick={() => navigate(`/update/${postId}`)}>수정</button>
+          <button onClick={handleDelete}>삭제</button>
+        </div>
+      )}
     </div>
   );
 }

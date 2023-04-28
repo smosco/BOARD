@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function PostCard({ post }) {
-  const { id, name, email, img, timestamp } = post;
+  const { postId, writer, title, location, img, timestamp } = post;
   const navigate = useNavigate();
 
   return (
@@ -11,10 +11,11 @@ export default function PostCard({ post }) {
       <img
         src={img}
         alt="img"
-        onClick={() => navigate(`/${id}`, { state: { post } })}
+        onClick={() => navigate(`/${postId}`, { state: { post } })}
       />
-      <div>{name}</div>
-      <div>{email}</div>
+      <div>{writer}</div>
+      <div>{title}</div>
+      <div>{location}</div>
       <div>{timestamp.seconds}</div>
     </div>
   );
