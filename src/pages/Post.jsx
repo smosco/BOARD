@@ -3,9 +3,11 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import { deletePost } from "../api/firebase";
+import Comments from "../components/Comments";
 
-export default function Post(update) {
+export default function Post() {
   const { user } = useAuthContext();
+
   const {
     state: { post },
   } = useLocation();
@@ -20,12 +22,14 @@ export default function Post(update) {
     contact,
     timestamp,
   } = post;
+
   const navigate = useNavigate();
   const handleDelete = () => {
     deletePost(postId).then(() => {
       navigate("/");
     });
   };
+
   return (
     <div>
       <img src={img} alt="img" />
@@ -41,6 +45,7 @@ export default function Post(update) {
           <button onClick={handleDelete}>삭제</button>
         </div>
       )}
+      <Comments user={user} postId={postId} />
     </div>
   );
 }

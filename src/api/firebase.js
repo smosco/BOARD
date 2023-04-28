@@ -77,6 +77,7 @@ export const addNewPost = async (user, data, url) => {
     writer: user.displayName,
     writerId: user.uid,
     img: url,
+    comments: [],
     timestamp: serverTimestamp(),
   });
 };
@@ -97,6 +98,15 @@ export const getPost = async (postId) => {
     return snapShot.data();
   }
   return {};
+};
+
+export const getPostComments = async (postId) => {
+  const docRef = doc(store, "posts", postId);
+  const snapShot = await getDoc(docRef);
+  if (snapShot.exists()) {
+    return snapShot.data().comments;
+  }
+  return [];
 };
 
 // doc으로 하면 되고 collection으로 하면 에러 => 일단 doc으로 포스팅을 했으니까요??
@@ -127,4 +137,29 @@ export const getPostsById = async (userId) => {
     posts.push(doc.data());
   });
   return posts;
+};
+
+export const updateComments = async (user, postId, comments, comment) => {
+  const commentsRef = doc(store, "posts", postId);
+  //await setDoc(commentsRef, {
+  //    name: "Frank",
+  //    favorites: { food: "Pizza", color: "Blue", subject: "recess" },
+  //    age: 12
+  //});
+
+  // To update age and favorite color:
+
+  await updateDoc(commentsRef, {
+    comments: [
+      ...comments,
+      {
+        id: postId + uuidv4(),
+        writer: user.displayName,
+        writerId: user.uid,
+        text: comment,
+        timeStamp: new Date(),
+      },
+    ],
+    //"favorites.color": "Red",
+  });
 };
